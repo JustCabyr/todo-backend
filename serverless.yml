@@ -38,6 +38,12 @@ functions:
       - httpApi:
           path: /item/{id}
           method: put
+  deleteItem:
+    handler: src/handler.deleteItem
+    events:
+      - httpApi:
+          path: /item/{id}
+          method: delete
 
 plugins:
   - serverless-plugin-typescript

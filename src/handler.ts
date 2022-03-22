@@ -112,3 +112,29 @@ export const updateItem = async (
     return handleError(e);
   }
 };
+
+export const deleteItem = async (
+  event: APIGatewayProxyEvent
+): Promise<APIGatewayProxyResult> => {
+  try {
+    const id = event.pathParameters?.id as string;
+
+    await fetchItemById(id);
+
+    await docClient
+      .delete({
+        TableName: tableName,
+        Key: {
+          itemID: id,
+        },
+      })
+      .promise();
+
+    return {
+      statusCode: 204,
+      body: 'Item deleted successfully!',
+    };
+  } catch (e) {
+    return handleError(e);
+  }
+};
