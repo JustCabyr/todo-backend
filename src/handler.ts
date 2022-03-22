@@ -132,9 +132,25 @@ export const deleteItem = async (
 
     return {
       statusCode: 204,
-      body: 'Item deleted successfully!',
+      body: JSON.stringify('Item deleted successfully!'),
     };
   } catch (e) {
     return handleError(e);
   }
+};
+
+export const getAllItems = async (
+  event: APIGatewayProxyEvent
+): Promise<APIGatewayProxyResult> => {
+  const output = await docClient
+    .scan({
+      TableName: tableName,
+    })
+    .promise();
+
+  return {
+    statusCode: 200,
+    headers,
+    body: JSON.stringify(output.Items),
+  };
 };

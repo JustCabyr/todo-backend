@@ -44,6 +44,12 @@ functions:
       - httpApi:
           path: /item/{id}
           method: delete
+  getAllItems:
+    handler: src/handler.getAllItems
+    events:
+      - httpApi:
+          path: /items
+          method: get
 
 plugins:
   - serverless-plugin-typescript
