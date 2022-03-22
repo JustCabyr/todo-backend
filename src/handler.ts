@@ -78,3 +78,37 @@ export const getItem = async (
     return handleError(e);
   }
 };
+
+export const updateItem = async (
+  event: APIGatewayProxyEvent
+): Promise<APIGatewayProxyResult> => {
+  try {
+    const id = event.pathParameters?.id as string;
+
+    await fetchItemById(id);
+
+    const reqBody = JSON.parse(event.body as string);
+
+    await schema.validate(reqBody, { abortEarly: false });
+
+    const item = {
+      ...reqBody,
+      itemID: id,
+    };
+
+    await docClient
+      .put({
+        TableName: tableName,
+        Item: item,
+      })
+      .promise();
+
+    return {
+      statusCode: 200,
+      headers,
+      body: JSON.stringify(item),
+    };
+  } catch (e) {
+    return handleError(e);
+  }
+};

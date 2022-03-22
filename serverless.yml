@@ -32,6 +32,12 @@ functions:
       - httpApi:
           path: /item/{id}
           method: get
+  updateItem:
+    handler: src/handler.updateItem
+    events:
+      - httpApi:
+          path: /item/{id}
+          method: put
 
 plugins:
   - serverless-plugin-typescript
