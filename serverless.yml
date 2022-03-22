@@ -7,15 +7,43 @@ provider:
   name: aws
   runtime: nodejs14.x
   lambdaHashingVersion: 20201221
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:PutItem
+            - dynamodb:GetItem
+            - dynamodb:DeleteItem
+            - dynamodb:Scan
+          Resource:
+            - Fn::GetAtt: [ItemsTable, Arn] 
 
 functions:
-  hello:
-    handler: src/handler.hello
+  createItem:
+    handler: src/handler.createItem
     events:
       - httpApi:
-          path: /
-          method: get
-
+          path: /item
+          method: post
 
 plugins:
   - serverless-plugin-typescript
+
+resources:
+  Resources:
+    ItemsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ItemsTable
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        AttributeDefinitions:
+          - AttributeName: itemID
+            AttributeType: S
+        KeySchema:
+          - AttributeName: itemID
+            KeyType: HASH
+
+
