@@ -26,6 +26,12 @@ functions:
       - httpApi:
           path: /item
           method: post
+  getItem:
+    handler: src/handler.getItem
+    events:
+      - httpApi:
+          path: /item/{id}
+          method: get
 
 plugins:
   - serverless-plugin-typescript

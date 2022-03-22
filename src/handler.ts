@@ -1,6 +1,6 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import AWS from 'aws-sdk';
-import { handleError } from './middleware/HttpError';
+import { handleError, HttpError } from './middleware/HttpError';
 import { v4 } from 'uuid';
 import * as yup from 'yup';
 
@@ -38,6 +38,39 @@ export const createItem = async (
 
     return {
       statusCode: 201,
+      headers,
+      body: JSON.stringify(item),
+    };
+  } catch (e) {
+    return handleError(e);
+  }
+};
+
+const fetchItemById = async (id: string) => {
+  const output = await docClient
+    .get({
+      TableName: tableName,
+      Key: {
+        itemID: id,
+      },
+    })
+    .promise();
+
+  if (!output.Item) {
+    throw new HttpError(404, { error: 'not found' });
+  }
+
+  return output.Item;
+};
+
+export const getItem = async (
+  event: APIGatewayProxyEvent
+): Promise<APIGatewayProxyResult> => {
+  try {
+    const item = await fetchItemById(event.pathParameters?.id as string);
+
+    return {
+      statusCode: 200,
       headers,
       body: JSON.stringify(item),
     };
