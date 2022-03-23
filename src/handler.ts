@@ -7,6 +7,8 @@ import * as yup from 'yup';
 const docClient = new AWS.DynamoDB.DocumentClient();
 const tableName = 'ItemsTable';
 
+const now = new Date();
+
 export const headers = {
   'content-type': 'application/json',
 };
@@ -25,8 +27,10 @@ export const createItem = async (
     await schema.validate(reqBody, { abortEarly: false });
 
     const item = {
-      ...reqBody,
       itemID: v4(),
+      ...reqBody,
+      createdAt: now.toISOString(),
+      updatedAt: now.toISOString(),
     };
 
     await docClient
@@ -85,15 +89,17 @@ export const updateItem = async (
   try {
     const id = event.pathParameters?.id as string;
 
-    await fetchItemById(id);
+    const oldItem = await fetchItemById(event.pathParameters?.id as string);
 
     const reqBody = JSON.parse(event.body as string);
 
     await schema.validate(reqBody, { abortEarly: false });
 
     const item = {
-      ...reqBody,
       itemID: id,
+      ...reqBody,
+      createdAt: oldItem.createdAt,
+      updatedAt: now.toISOString(),
     };
 
     await docClient
