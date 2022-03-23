@@ -4,8 +4,6 @@
 - TypeScript
 - AWS (Lambda, API Gateway, DynamoDB)
 - [`Serverless Framework`](https://www.serverless.com/framework/docs/)
-- Unit Testing & Mocking using Mocha and Sinon
-- E2E Testing using Mocha and Supertest
 
 ## Installation
 
